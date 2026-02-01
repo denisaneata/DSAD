@@ -21,6 +21,9 @@ from factor_analyzer import calculate_bartlett_sphericity, calculate_kmo
 chi2, p = calculate_bartlett_sphericity(X)
 kmo_all, kmo = calculate_kmo(X)
 
+print("Bartlet p:", p)
+print("KMO:", kmo)
+
 #numarul de factori(Kaiser)
 
 fa_test = FactorAnalyzer(rotation=None)
@@ -59,23 +62,24 @@ df_r = pd.DataFrame(
 df_r.to_csv("r.csv")
 
 #cercul corelatiilor
+if n_factori >= 2:
+    plt.figure(figsize=(8, 8))
 
-plt.figure(figsize=(8,8))
+    theta = np.linspace(0, 2 * np.pi, 200)
+    plt.plot(np.cos(theta), np.sin(theta))  # cercul unitate
 
-theta = np.linspace(0, 2*np.pi, 200)
-plt.plot(np.cos(theta), np.sin(theta))
+    plt.axhline(0)
+    plt.axvline(0)
 
-plt.axhline(0)
-plt.axvline(0)
+    plt.scatter(df_r["F1"], df_r["F2"])
 
-plt.scatter(df_r["F1"], df_r["F2"])
+    for i in range(len(df_r)):
+        plt.text(df_r["F1"].iloc[i], df_r["F2"].iloc[i], df_r.index[i])
 
-for i in range(len(df_r)):
-    plt.text(df_r["F1"].iloc[i], df_r["F2"].iloc[i], df_r.index[i])
-
-plt.xlabel("F1")
-plt.ylabel("F2")
-plt.gca().set_aspect("equal")
-plt.show()
-
-
+    plt.xlabel("F1")
+    plt.ylabel("F2")
+    plt.gca().set_aspect("equal")
+    plt.title("Cercul corelatiilor F1 vs F2")
+    plt.show()
+else:
+    print("numar factori < 2")
